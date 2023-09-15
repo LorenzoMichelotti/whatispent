@@ -9,7 +9,7 @@ export default async function Account() {
   } = await supabase.auth.getSession();
 
   return (
-    <div className="p-12 w-screen">
+    <div className="p-4 md:p-12 w-full">
       <div className="w-full grid grid-cols-2 auto-cols-fr">
         <h1 className="text-2xl">Transactions</h1>
         <div className="ml-auto">

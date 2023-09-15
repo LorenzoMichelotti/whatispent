@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main>{children}</main>
+        <main className="w-screen">{children}</main>
         <Toaster />
       </body>
     </html>
