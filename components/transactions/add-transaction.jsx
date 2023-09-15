@@ -11,15 +11,22 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useRef, useState } from "react";
 import { useToast } from "../ui/use-toast";
+import { DatePicker } from "../ui/DatePicker";
 
 export default function AddTransactionModal({ updateTransaction }) {
-  const [transaction, setTransaction] = useState({});
+  const transactionInitialState = {
+    description: "",
+    bank_name: "",
+    amount: "",
+  };
+
+  const [transaction, setTransaction] = useState(transactionInitialState);
   const triggerRef = useRef();
   const { toast } = useToast();
 
   return (
     <Dialog>
-      <DialogTrigger ref={triggerRef}>
+      <DialogTrigger ref={triggerRef} asChild>
         <Button>Add transaction</Button>
       </DialogTrigger>
       <DialogContent>
@@ -31,6 +38,7 @@ export default function AddTransactionModal({ updateTransaction }) {
           action="POST"
           onSubmit={(e) => {
             e.preventDefault();
+            console.log(transaction);
             if (
               !transaction?.description ||
               !transaction?.amount ||
@@ -44,22 +52,35 @@ export default function AddTransactionModal({ updateTransaction }) {
               return;
             }
             updateTransaction(transaction, triggerRef);
+            setTransaction(transactionInitialState);
           }}
         >
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="created_at" className="text-right">
+                Date
+              </Label>
+              <DatePicker
+                onChange={(date) =>
+                  setTransaction((prev) => ({
+                    ...prev,
+                    created_at: date,
+                  }))
+                }
+                className="col-span-3"
+              ></DatePicker>
               <Label htmlFor="description" className="text-right">
                 Description
               </Label>
               <Input
-                id="description"
-                value={transaction.description}
                 onChange={(e) =>
                   setTransaction((prev) => ({
                     ...prev,
                     description: e.target.value,
                   }))
                 }
+                value={transaction.description}
+                id="description"
                 placeholder="Super market"
                 className="col-span-3"
               />
@@ -67,16 +88,16 @@ export default function AddTransactionModal({ updateTransaction }) {
                 Amount (R$)
               </Label>
               <Input
-                id="amount"
-                type="number"
                 onChange={(e) =>
                   setTransaction((prev) => ({
                     ...prev,
                     amount: e.target.value,
                   }))
                 }
-                prefix="R$ "
                 value={transaction.amount}
+                title="Examples: 0,50; 1.99; 20; 0;"
+                type="number"
+                id="amount"
                 placeholder="00.00"
                 className="col-span-3"
               />
@@ -84,7 +105,6 @@ export default function AddTransactionModal({ updateTransaction }) {
                 Bank name
               </Label>
               <Input
-                id="bank_name"
                 onChange={(e) =>
                   setTransaction((prev) => ({
                     ...prev,
@@ -92,6 +112,7 @@ export default function AddTransactionModal({ updateTransaction }) {
                   }))
                 }
                 value={transaction.bank_name}
+                id="bank_name"
                 placeholder="Nubank"
                 className="col-span-3"
               />

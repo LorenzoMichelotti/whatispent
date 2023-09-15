@@ -4,6 +4,18 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import DataTable from "./data-table";
 import AddTransactionModal from "./add-transaction";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
+import { Button } from "../ui/button";
+import { CopyIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 
 export default function Transactions({ session }) {
   const [loading, setLoading] = useState(true);
@@ -20,7 +32,6 @@ export default function Transactions({ session }) {
         .from("transactions")
         .select("*", { count: "exact" })
         .eq("user_id", user?.id)
-        .range(0, 25)
         .order("created_at", { ascending: false });
 
       if (error && status !== 406) {
@@ -55,6 +66,7 @@ export default function Transactions({ session }) {
         description: transaction.description,
         amount: transaction.amount,
         bank_name: transaction.bank_name,
+        created_at: transaction.created_at || undefined,
       });
       if (error) throw error;
       toast({
@@ -76,6 +88,32 @@ export default function Transactions({ session }) {
     }
   }
 
+  async function deleteTransaction(transactionId) {
+    try {
+      setLoading(true);
+
+      console.log(transactionId);
+      let { error } = await supabase
+        .from("transactions")
+        .delete()
+        .eq("id", transactionId);
+      if (error) throw error;
+      toast({
+        variant: "destructive",
+        title: "Transaction was deleted successfully❗",
+      });
+    } catch (error) {
+      toast({
+        variant: "outline",
+        title: "Error updating the transaction ❗",
+        description: "The transaction was not deleted, please try again",
+      });
+    } finally {
+      setLoading(false);
+      getTransactions();
+    }
+  }
+
   useEffect(() => {
     getTransactions();
   }, [user, getTransactions]);
@@ -86,7 +124,7 @@ export default function Transactions({ session }) {
       header: "Date",
       cell: ({ row }) => {
         const createdAt = row.getValue("created_at");
-        const formatted = new Date(createdAt).toLocaleString();
+        const formatted = new Date(createdAt).toLocaleDateString();
 
         return <div className="text-left font-medium">{formatted}</div>;
       },
@@ -112,6 +150,42 @@ export default function Transactions({ session }) {
       accessorKey: "bank_name",
       header: "Bank",
     },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const transaction = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                className="flex justify-between items-center"
+                onClick={() => navigator.clipboard.writeText(transaction.id)}
+              >
+                <span>Copy transaction ID</span>
+                <CopyIcon size={14} className="ml-2 mt-[0.1rem]"></CopyIcon>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => deleteTransaction(transaction.id)}
+                className="flex text-red-600 focus:text-red-600 focus:bg-red-100 justify-between items-center"
+              >
+                <span>Delete</span>
+                <TrashIcon size={14}></TrashIcon>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
   ];
 
   return (
@@ -121,12 +195,7 @@ export default function Transactions({ session }) {
           updateTransaction={updateTransaction}
         ></AddTransactionModal>
       </div>
-      {transactions && <DataTable columns={columns} data={transactions} />}
-      {!transactions && (
-        <div className="p-8 rounded-lg border flex justify-center items-center">
-          no transactions
-        </div>
-      )}
+      <DataTable columns={columns} data={transactions} />
     </div>
   );
 }

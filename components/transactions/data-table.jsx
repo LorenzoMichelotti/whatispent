@@ -3,6 +3,7 @@
 import {
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -14,12 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DataTablePagination } from "./data-table-pagination";
 
 export default function DataTable({ columns, data }) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
@@ -44,7 +47,7 @@ export default function DataTable({ columns, data }) {
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {data && table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
@@ -66,6 +69,7 @@ export default function DataTable({ columns, data }) {
           )}
         </TableBody>
       </Table>
+      {data && <DataTablePagination table={table} />}
     </div>
   );
 }
