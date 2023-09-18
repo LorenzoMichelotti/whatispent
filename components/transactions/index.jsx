@@ -211,7 +211,7 @@ export default function Transactions({ session }) {
         <ChartCard
           data={Object.entries(months).map((month) => ({
             name: month[1],
-            amount:
+            total:
               transactions &&
               transactions
                 ?.filter(
