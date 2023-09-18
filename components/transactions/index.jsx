@@ -16,6 +16,8 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import { CopyIcon } from "lucide-react";
 import { TrashIcon } from "lucide-react";
+import ReportCard from "./reports/report-card";
+import ChartCard from "./reports/chart-card";
 
 export default function Transactions({ session }) {
   const [loading, setLoading] = useState(true);
@@ -188,8 +190,39 @@ export default function Transactions({ session }) {
     },
   ];
 
+  const months = {
+    1: "jan",
+    2: "feb",
+    3: "mar",
+    4: "apr",
+    5: "may",
+    6: "jun",
+    7: "jul",
+    8: "aug",
+    9: "sep",
+    10: "okt",
+    11: "nov",
+    12: "dec",
+  };
+
   return (
     <div className="mt-8 w-full flex flex-col">
+      <div className="grid grid-cols-3 gap-2 auto-cols-fr mb-4">
+        <ChartCard
+          data={Object.entries(months).map((month) => ({
+            name: month[1],
+            amount:
+              transactions &&
+              transactions
+                ?.filter(
+                  (transaction) =>
+                    new Date(transaction.created_at).getMonth() + 1 == month[0]
+                )
+                .map((transaction) => transaction.amount)
+                .reduce((prev, next) => prev + next, 0),
+          }))}
+        ></ChartCard>
+      </div>
       <div className="ml-auto mb-4">
         <AddTransactionModal
           updateTransaction={updateTransaction}
