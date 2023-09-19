@@ -26,7 +26,7 @@ export default function DataTable({ columns, data }) {
   });
 
   return (
-    <div className="rounded-md border w-full overflow-auto">
+    <div className="rounded-md border w-full">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
