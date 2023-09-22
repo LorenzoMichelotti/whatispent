@@ -167,7 +167,7 @@ export default function Transactions({ session }) {
         const Icon = categoryStyle.icon;
         return (
           <Tooltip>
-            <TooltipTrigger className="cursor-default">
+            <TooltipTrigger className="cursor-default ">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0.8 }}
                 animate={{ scale: 1, opacity: 1 }}
