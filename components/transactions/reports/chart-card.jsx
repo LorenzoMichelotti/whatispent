@@ -43,7 +43,12 @@ export default function ChartCard({ data }) {
               tickFormatter={(value) => `R$${value}`}
             />
             <Tooltip formatter={(value) => `R$${value.toFixed(2)}`} />
-            <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
+            <Bar
+              background={{ fillOpacity: 0 }}
+              dataKey="total"
+              fill="#adfa1d"
+              radius={[4, 4, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

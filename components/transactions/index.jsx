@@ -18,6 +18,18 @@ import { CopyIcon } from "lucide-react";
 import { TrashIcon } from "lucide-react";
 import ReportCard from "./reports/report-card";
 import ChartCard from "./reports/chart-card";
+import {
+  categoryEnumerator,
+  categoryStyles,
+} from "./categories/category-styles";
+import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import { motion } from "framer-motion";
 
 export default function Transactions({ session }) {
   const [loading, setLoading] = useState(true);
@@ -58,7 +70,21 @@ export default function Transactions({ session }) {
     }
   }, [user, supabase, toast]);
 
-  async function updateTransaction(transaction, modalTriggerRef) {
+  /**
+   * @typedef Transaction
+   * @property {number} id
+   * @property {string} description
+   * @property {string} [bank_name]
+   * @property {string} created_at
+   * @property {number} amount
+   * @property {number} category_id
+   */
+  //
+
+  async function updateTransaction(
+    /** @type {Transaction} */ transaction,
+    modalTriggerRef
+  ) {
     try {
       setLoading(true);
 
@@ -69,6 +95,7 @@ export default function Transactions({ session }) {
         amount: transaction.amount,
         bank_name: transaction.bank_name,
         created_at: transaction.created_at || undefined,
+        category_id: transaction.category_id,
       });
       if (error) throw error;
       toast({
@@ -132,6 +159,34 @@ export default function Transactions({ session }) {
       },
     },
     {
+      accessorKey: "category_id",
+      header: "Tag",
+      cell: ({ row }) => {
+        const categoryStyle = categoryEnumerator[row.getValue("category_id")];
+        const className = categoryStyle.className;
+        const Icon = categoryStyle.icon;
+        return (
+          <Tooltip>
+            <TooltipTrigger className="cursor-default">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0.8 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className={cn(
+                  "text-right font-medium rounded-full w-8 aspect-square flex justify-center items-center",
+                  className
+                )}
+              >
+                <Icon size={18}></Icon>
+              </motion.div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{categoryStyle.name}</p>
+            </TooltipContent>
+          </Tooltip>
+        );
+      },
+    },
+    {
       accessorKey: "description",
       header: "Description",
     },
@@ -147,10 +202,6 @@ export default function Transactions({ session }) {
 
         return <div className="text-right font-medium">{formatted}</div>;
       },
-    },
-    {
-      accessorKey: "bank_name",
-      header: "Bank",
     },
     {
       id: "actions",
@@ -181,7 +232,7 @@ export default function Transactions({ session }) {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => deleteTransaction(transaction.id)}
-                className="flex text-red-600 focus:text-red-600 focus:bg-red-100 justify-between items-center"
+                className="flex text-red-600 focus:text-red-600 focus:bg-red-100 dark:focus:bg-red-500/20 justify-between items-center"
               >
                 <span>Delete</span>
                 <TrashIcon size={14}></TrashIcon>
@@ -226,12 +277,14 @@ export default function Transactions({ session }) {
           }))}
         ></ChartCard>
       </div>
-      <div className="ml-auto mb-4">
-        <AddTransactionModal
-          updateTransaction={updateTransaction}
-        ></AddTransactionModal>
-      </div>
-      <DataTable columns={columns} data={transactions} />
+      <TooltipProvider>
+        <div className="ml-auto mb-4">
+          <AddTransactionModal
+            updateTransaction={updateTransaction}
+          ></AddTransactionModal>
+        </div>
+        <DataTable columns={columns} data={transactions} />
+      </TooltipProvider>
     </div>
   );
 }
