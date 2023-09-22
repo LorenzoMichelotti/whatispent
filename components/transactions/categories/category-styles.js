@@ -1,20 +1,19 @@
-import { Utensils, Laptop } from "lucide-react";
-import dynamic from "next/dynamic";
+import { Utensils, Laptop, Tag } from "lucide-react";
 
 /** @type {Object.<string, {icon: JSX.Element, className: string, name: string}>} */
 export const categoryStyles = {
   General: {
-    icon: dynamic(() => import("lucide-react").then((icons) => icons.Tag)),
+    icon: Tag,
     className: "text-slate-700 bg-slate-200/30",
     name: "General",
   },
   Food: {
-    icon: dynamic(() => import("lucide-react").then((icons) => icons.Utensils)),
+    icon: Utensils,
     className: "text-red-400 bg-red-200/30",
     name: "Food",
   },
   Electronics: {
-    icon: dynamic(() => import("lucide-react").then((icons) => icons.Laptop)),
+    icon: Laptop,
     className: "text-blue-500 bg-blue-200/30",
     name: "GeneElectronicsral",
   },
