@@ -16,14 +16,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider
+        {/* <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
-        >
-          <main className="w-screen">{children}</main>
-        </ThemeProvider>
+        > */}
+        <main className="w-screen">{children}</main>
+        {/* </ThemeProvider> */}
         <Toaster />
       </body>
     </html>
