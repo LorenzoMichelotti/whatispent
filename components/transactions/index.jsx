@@ -93,9 +93,6 @@ export default function Transactions({ session }) {
 
   async function deleteTransaction(transactionId) {
     try {
-      setLoading(true);
-
-      console.log(transactionId);
       let { error } = await supabase
         .from("transactions")
         .delete()
@@ -112,7 +109,6 @@ export default function Transactions({ session }) {
         description: "The transaction was not deleted, please try again",
       });
     } finally {
-      setLoading(false);
       getTransactions();
     }
   }
