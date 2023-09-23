@@ -4,35 +4,23 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import DataTable from "./data-table";
 import AddTransactionModal from "./add-transaction";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
-import { Button } from "../ui/button";
-import { CopyIcon } from "lucide-react";
-import { TrashIcon } from "lucide-react";
-import ReportCard from "./reports/report-card";
-import ChartCard from "./reports/chart-card";
-import {
-  categoryEnumerator,
-  categoryStyles,
-} from "./categories/category-styles";
-import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
-import { motion } from "framer-motion";
+import { TooltipProvider } from "../ui/tooltip";
+import DataTableActionButton from "./data-table-action-button";
+import CategoryIcon from "./categories/category-icon";
+import TransactionChartCard from "./reports/transaction-chart-card";
+
+/**
+ * @typedef Transaction
+ * @property {number} id
+ * @property {string} description
+ * @property {string} [bank_name]
+ * @property {string} created_at
+ * @property {number} amount
+ * @property {number} category_id
+ */
+//
 
 export default function Transactions({ session }) {
-  const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState();
   const { toast } = useToast();
   const supabase = createClientComponentClient();
@@ -40,8 +28,6 @@ export default function Transactions({ session }) {
 
   const getTransactions = useCallback(async () => {
     try {
-      setLoading(true);
-
       let { data, error, status } = await supabase
         .from("transactions")
         .select("*", { count: "exact" })
@@ -65,21 +51,13 @@ export default function Transactions({ session }) {
         setTransactions(data);
       }
     } catch (error) {
-    } finally {
-      setLoading(false);
+      toast({
+        variant: "destructive",
+        title: "Error fetching transactions",
+        description: "please wait while were trying to fix this issue",
+      });
     }
   }, [user, supabase, toast]);
-
-  /**
-   * @typedef Transaction
-   * @property {number} id
-   * @property {string} description
-   * @property {string} [bank_name]
-   * @property {string} created_at
-   * @property {number} amount
-   * @property {number} category_id
-   */
-  //
 
   async function updateTransaction(
     /** @type {Transaction} */ transaction,
@@ -149,6 +127,14 @@ export default function Transactions({ session }) {
 
   const columns = [
     {
+      accessorKey: "category_id",
+      enableHiding: false,
+      header: "Tag",
+      cell: ({ row }) => {
+        return <CategoryIcon row={row} />;
+      },
+    },
+    {
       accessorKey: "created_at",
       header: "Date",
       cell: ({ row }) => {
@@ -159,36 +145,15 @@ export default function Transactions({ session }) {
       },
     },
     {
-      accessorKey: "category_id",
-      header: "Tag",
+      accessorKey: "description",
+      header: "Desc",
       cell: ({ row }) => {
-        const categoryStyle = categoryEnumerator[row.getValue("category_id")];
-        const className = categoryStyle.className;
-        const Icon = categoryStyle.icon;
         return (
-          <Tooltip>
-            <TooltipTrigger className="cursor-default ">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0.8 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className={cn(
-                  "text-right font-medium rounded-full w-8 aspect-square flex justify-center items-center",
-                  className
-                )}
-              >
-                <Icon size={18}></Icon>
-              </motion.div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{categoryStyle.name}</p>
-            </TooltipContent>
-          </Tooltip>
+          <div className="max-w-[3rem] sm:max-w-[15rem] truncate">
+            {row.getValue("description")}
+          </div>
         );
       },
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
     },
     {
       accessorKey: "amount",
@@ -205,77 +170,28 @@ export default function Transactions({ session }) {
     },
     {
       id: "actions",
+      header: "Act",
       enableHiding: false,
       cell: ({ row }) => {
         const transaction = row.original;
-
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Options"
-                variant="ghost"
-                className="h-8 w-8 p-0"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                className="flex justify-between items-center"
-                onClick={() => navigator.clipboard.writeText(transaction.id)}
-              >
-                <span>Copy transaction ID</span>
-                <CopyIcon size={14} className="ml-2 mt-[0.1rem]"></CopyIcon>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => deleteTransaction(transaction.id)}
-                className="flex text-red-600 focus:text-red-600 focus:bg-red-100 dark:focus:bg-red-500/20 justify-between items-center"
-              >
-                <span>Delete</span>
-                <TrashIcon size={14}></TrashIcon>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="w-full flex justify-center">
+            <DataTableActionButton
+              deleteTransaction={deleteTransaction}
+              transaction={transaction}
+            />
+          </div>
         );
       },
     },
   ];
 
-  const months = {
-    1: "jan",
-    2: "feb",
-    3: "mar",
-    4: "apr",
-    5: "may",
-    6: "jun",
-    7: "jul",
-    8: "aug",
-    9: "sep",
-    10: "okt",
-    11: "nov",
-    12: "dec",
-  };
-
   return (
     <div className="mt-8 w-full flex flex-col">
       <div className="grid grid-cols-3 gap-2 auto-cols-fr mb-4">
-        <ChartCard
-          data={Object.entries(months).map((month) => ({
-            name: month[1],
-            total:
-              transactions &&
-              transactions
-                ?.filter(
-                  (transaction) =>
-                    new Date(transaction.created_at).getMonth() + 1 == month[0]
-                )
-                .map((transaction) => transaction.amount)
-                .reduce((prev, next) => prev + next, 0),
-          }))}
-        ></ChartCard>
+        <TransactionChartCard
+          transactions={transactions}
+        ></TransactionChartCard>
       </div>
       <TooltipProvider>
         <div className="ml-auto mb-4">

@@ -19,7 +19,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function ChartCard({ data }) {
+export default function TransactionChartCard({ transactions }) {
+  const months = {
+    1: "jan",
+    2: "feb",
+    3: "mar",
+    4: "apr",
+    5: "may",
+    6: "jun",
+    7: "jul",
+    8: "aug",
+    9: "sep",
+    10: "okt",
+    11: "nov",
+    12: "dec",
+  };
+
+  const data = Object.entries(months).map((month) => ({
+    name: month[1],
+    total:
+      transactions &&
+      transactions
+        ?.filter(
+          (transaction) =>
+            new Date(transaction.created_at).getMonth() + 1 == month[0]
+        )
+        .map((transaction) => transaction.amount)
+        .reduce((prev, next) => prev + next, 0),
+  }));
+
   return (
     <Card className="col-span-3">
       <CardHeader>
