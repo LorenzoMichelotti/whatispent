@@ -64,9 +64,6 @@ export default function Transactions({ session }) {
     modalTriggerRef
   ) {
     try {
-      setLoading(true);
-
-      console.log(transaction);
       let { error } = await supabase.from("transactions").upsert({
         user_id: user.id,
         description: transaction.description,
@@ -89,7 +86,6 @@ export default function Transactions({ session }) {
           "There was a problem while updating/inserting the transaction",
       });
     } finally {
-      setLoading(false);
       if (modalTriggerRef) modalTriggerRef.current.click();
       getTransactions();
     }
