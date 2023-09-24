@@ -13,11 +13,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function DatePicker({ date, className, onChange }) {
+export function DatePicker({ date, className, onChange, disabled }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          disabled={disabled}
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
@@ -31,6 +32,7 @@ export function DatePicker({ date, className, onChange }) {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <Calendar
+          disabled={disabled}
           mode="single"
           selected={date}
           onSelect={(value) => {

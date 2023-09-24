@@ -11,7 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { DatePicker } from "../ui/DatePicker";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -22,9 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoryStyles } from "./categories/category-styles";
+import {
+  categoryEnumerator,
+  categoryStyles,
+} from "./categories/category-styles";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { Pencil } from "lucide-react";
 
 /**
  * @typedef Category
@@ -46,7 +50,10 @@ import { motion } from "framer-motion";
  */
 //
 
-export default function AddTransactionModal({ updateTransaction }) {
+export default function EditTransactionModal({
+  updateTransaction,
+  transactionToUpdate,
+}) {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState({
     id: "General",
@@ -70,7 +77,7 @@ export default function AddTransactionModal({ updateTransaction }) {
     /** @type {Transaction} */ (transactionInitialState)
   );
 
-  const triggerRef = useRef();
+  const triggerRef = useRef(null);
   const { toast } = useToast();
   const supabase = createClientComponentClient();
 
@@ -96,13 +103,9 @@ export default function AddTransactionModal({ updateTransaction }) {
     }
   }, [supabase]);
 
-  useEffect(() => {
-    getCategories();
-  }, [getCategories]);
-
   function selectCategory(/** @type string */ catName) {
     console.log(catName);
-    if (!catName) return;
+    if (!catName || catName === "" || catName.length <= 0) return;
     if (!categoryStyles[catName]) return;
     setSelectedCategory({
       id: catName,
@@ -115,14 +118,39 @@ export default function AddTransactionModal({ updateTransaction }) {
     }));
   }
 
+  const getTransactionToUpdate = useCallback(() => {
+    if (!transactionToUpdate) {
+      return;
+    }
+    console.log(transactionToUpdate);
+    setTransaction(transactionToUpdate);
+
+    let category = categoryEnumerator[transactionToUpdate.category_id];
+
+    if (!category) return;
+    setSelectedCategory({
+      id: category.name,
+      Icon: category.icon,
+      className: category.className,
+    });
+  }, [transactionToUpdate]);
+
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={() => {
+        getTransactionToUpdate();
+        getCategories();
+      }}
+    >
       <DialogTrigger ref={triggerRef} asChild>
-        <Button>Add transaction</Button>
+        <div className="flex justify-between items-center w-full py-1 px-2 text-md text-[14px] hover:bg-slate-100 rounded-sm transition-colors">
+          <span>Edit</span>
+          <Pencil size={14}></Pencil>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Transaction</DialogTitle>
+          <DialogTitle className="flex w-full">Editing Transaction</DialogTitle>
         </DialogHeader>
 
         <form
@@ -152,7 +180,11 @@ export default function AddTransactionModal({ updateTransaction }) {
                 Category
               </Label>
               <div className="col-span-3 grid grid-cols-6 grid-flow-col">
-                <Select onValueChange={(value) => selectCategory(value)}>
+                <Select
+                  disabled={loadingCategories}
+                  value={selectedCategory.id}
+                  onValueChange={(value) => selectCategory(value)}
+                >
                   <SelectTrigger className="col-span-5">
                     <SelectValue placeholder={"General"} />
                   </SelectTrigger>
@@ -231,16 +263,8 @@ export default function AddTransactionModal({ updateTransaction }) {
                 Date
               </Label>
               <DatePicker
-                date={transaction.created_at}
+                date={new Date(transaction.created_at)}
                 placeholder="AA"
-                onChange={(date) => {
-                  console.log(transaction.created_at);
-                  console.log(date);
-                  setTransaction((prev) => ({
-                    ...prev,
-                    created_at: date,
-                  }));
-                }}
                 className="col-span-3"
               ></DatePicker>
             </div>

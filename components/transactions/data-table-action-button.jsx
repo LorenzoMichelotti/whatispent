@@ -10,10 +10,12 @@ import {
 } from "../ui/dropdown-menu";
 import { CopyIcon } from "lucide-react";
 import { TrashIcon } from "lucide-react";
+import EditTransactionModal from "./edit-transaction";
 
 export default function DataTableActionButton({
   transaction,
   deleteTransaction,
+  editTransaction,
 }) {
   return (
     <DropdownMenu>
@@ -30,6 +32,12 @@ export default function DataTableActionButton({
         >
           <span>Copy transaction ID</span>
           <CopyIcon size={14} className="ml-2 mt-[0.1rem]"></CopyIcon>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="flex justify-between items-center">
+          <EditTransactionModal
+            updateTransaction={editTransaction}
+            transactionToUpdate={transaction}
+          ></EditTransactionModal>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

@@ -162,13 +162,14 @@ export default function Transactions({ session }) {
     },
     {
       id: "actions",
-      header: "Act",
+      header: <div className="text-center">Act</div>,
       enableHiding: false,
       cell: ({ row }) => {
         const transaction = row.original;
         return (
           <div className="w-full flex justify-center">
             <DataTableActionButton
+              editTransaction={updateTransaction}
               deleteTransaction={deleteTransaction}
               transaction={transaction}
             />
