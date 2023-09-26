@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <main className="w-screen">{children}</main>
+          <main className="max-w-screen">{children}</main>
         </ThemeProvider>
         <Toaster />
       </body>
