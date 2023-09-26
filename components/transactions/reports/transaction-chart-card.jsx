@@ -18,8 +18,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useContext } from "react";
+import { PreferenceContext } from "@/components/navigation/hide-money-button";
 
 export default function TransactionChartCard({ transactions }) {
+  const preferences = useContext(PreferenceContext);
   const months = {
     1: "jan",
     2: "feb",
@@ -68,9 +71,15 @@ export default function TransactionChartCard({ transactions }) {
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `R$${value}`}
+              tickFormatter={(value) =>
+                preferences.hideMoney ? "---" : `R$${value}`
+              }
             />
-            <Tooltip formatter={(value) => `R$${value.toFixed(2)}`} />
+            <Tooltip
+              formatter={(value) =>
+                preferences.hideMoney ? "---" : `R$${value.toFixed(2)}`
+              }
+            />
             <Bar
               background={{ fillOpacity: 0 }}
               dataKey="total"

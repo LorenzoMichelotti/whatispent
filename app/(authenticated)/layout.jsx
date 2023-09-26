@@ -10,34 +10,42 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import UserMenu from "@/components/user-menu";
-import Link from "next/link";
+import UserMenu from "@/components/navigation/user-menu";
+import React from "react";
+import HideMoneyButton, {
+  PreferenceContextProvider,
+} from "@/components/navigation/hide-money-button";
 
 export const dynamic = "force-dynamic";
 
 export default function AuthenticatedLayout({ children }) {
   return (
-    <div className="w-full flex flex-col p-4">
-      <nav className="flex justify-between w-full pb-4">
-        <UserMenu />
-        <form action="/auth/signout" method="post">
-          <div className="ml-auto">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" type="submit">
-                    <LogOut></LogOut>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Sign Out</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+    <PreferenceContextProvider>
+      <div className="w-full flex flex-col p-4">
+        <nav className="flex justify-between w-full pb-4">
+          <UserMenu />
+          <div className="flex items-center space-x-2">
+            <HideMoneyButton></HideMoneyButton>
+            <form action="/auth/signout" method="post">
+              <div className="ml-auto">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" type="submit">
+                        <LogOut></LogOut>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Sign Out</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </form>
           </div>
-        </form>
-      </nav>
-      {children}
-    </div>
+        </nav>
+        {children}
+      </div>
+    </PreferenceContextProvider>
   );
 }

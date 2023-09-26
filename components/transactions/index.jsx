@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import DataTable from "./data-table";
@@ -8,6 +8,7 @@ import { TooltipProvider } from "../ui/tooltip";
 import DataTableActionButton from "./data-table-action-button";
 import CategoryIcon from "./categories/category-icon";
 import TransactionChartCard from "./reports/transaction-chart-card";
+import { PreferenceContext } from "../navigation/hide-money-button";
 
 /**
  * @typedef Transaction
@@ -25,6 +26,7 @@ export default function Transactions({ session }) {
   const { toast } = useToast();
   const supabase = createClientComponentClient();
   const user = session?.user;
+  const preferences = useContext(PreferenceContext);
 
   const getTransactions = useCallback(async () => {
     try {
@@ -157,7 +159,11 @@ export default function Transactions({ session }) {
           currency: "BRL",
         }).format(amount);
 
-        return <div className="text-right font-medium">{formatted}</div>;
+        return (
+          <div className="text-right font-medium">
+            {preferences?.hideMoney ? "---" : formatted}
+          </div>
+        );
       },
     },
     {
