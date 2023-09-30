@@ -68,14 +68,14 @@ export default function UpdatePasswordForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 flex flex-col"
+        className="space-y-8 w-full flex flex-col"
       >
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>New password</FormLabel>
               <FormControl>
                 <Input
                   disabled={isLoading}

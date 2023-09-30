@@ -15,7 +15,7 @@ export default function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="aspect-square rounded-full">
+        <Button variant="outline" className="w-14">
           <Avatar>
             <AvatarImage src={""} />
             <AvatarFallback className="bg-transparent">
@@ -24,7 +24,7 @@ export default function UserMenu() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="ml-4">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link href={"/transactions"} passHref>

@@ -26,13 +26,13 @@ export default function DataTableActionButton({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
+        {/* <DropdownMenuItem
           className="flex justify-between items-center"
           onClick={() => navigator.clipboard.writeText(transaction.id)}
         >
           <span>Copy transaction ID</span>
           <CopyIcon size={14} className="ml-2 mt-[0.1rem]"></CopyIcon>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuItem asChild className="flex justify-between items-center">
           <EditTransactionModal
             updateTransaction={editTransaction}

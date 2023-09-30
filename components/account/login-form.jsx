@@ -17,6 +17,7 @@ import { useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { LoaderIcon } from "lucide-react";
+import { toast } from "../ui/use-toast";
 
 const formSchema = z.object({
   email: z.string().min(4).max(150),
@@ -49,6 +50,10 @@ export default function LoginForm() {
     });
     if (error) {
       console.log(error);
+      toast({
+        variant: "destructive",
+        title: error.message,
+      });
       setIsLoading(false);
       return;
     }

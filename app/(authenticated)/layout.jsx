@@ -24,14 +24,14 @@ export default function AuthenticatedLayout({ children }) {
       <div className="w-full flex flex-col p-4">
         <nav className="flex justify-between w-full pb-4">
           <UserMenu />
-          <div className="flex items-center space-x-2">
-            <HideMoneyButton></HideMoneyButton>
-            <form action="/auth/signout" method="post">
-              <div className="ml-auto">
-                <TooltipProvider>
+          <TooltipProvider>
+            <div className="flex items-center space-x-2">
+              <HideMoneyButton></HideMoneyButton>
+              <form action="/auth/signout" method="post">
+                <div className="ml-auto">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="outline" type="submit">
+                      <Button variant="outline" type="submit" className="w-14">
                         <LogOut></LogOut>
                       </Button>
                     </TooltipTrigger>
@@ -39,10 +39,10 @@ export default function AuthenticatedLayout({ children }) {
                       <p>Sign Out</p>
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
-              </div>
-            </form>
-          </div>
+                </div>
+              </form>
+            </div>
+          </TooltipProvider>
         </nav>
         {children}
       </div>

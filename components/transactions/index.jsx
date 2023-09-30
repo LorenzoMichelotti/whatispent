@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import DataTable from "./data-table";
 import AddTransactionModal from "./add-transaction";
 import { TooltipProvider } from "../ui/tooltip";
-import DataTableActionButton from "./data-table-action-button";
+import DataTableActionButton from "./data-table-dropdown-menu-button";
 import CategoryIcon from "./categories/category-icon";
 import TransactionChartCard from "./reports/transaction-chart-card";
 import { PreferenceContext } from "../navigation/hide-money-button";
@@ -67,6 +67,7 @@ export default function Transactions({ session }) {
   ) {
     try {
       let { error } = await supabase.from("transactions").upsert({
+        id: transaction.id,
         user_id: user.id,
         description: transaction.description,
         amount: transaction.amount,
