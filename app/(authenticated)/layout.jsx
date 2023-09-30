@@ -15,6 +15,7 @@ import React from "react";
 import HideMoneyButton, {
   PreferenceContextProvider,
 } from "@/components/navigation/hide-money-button";
+import Title from "@/components/title";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +45,12 @@ export default function AuthenticatedLayout({ children }) {
             </div>
           </TooltipProvider>
         </nav>
-        {children}
+        <div className="max-w-5xl mx-auto">
+          {children}
+          <div className="px-12 mt-4 text-slate-500">
+            <Title size="sm"></Title>
+          </div>
+        </div>
       </div>
     </PreferenceContextProvider>
   );

@@ -88,7 +88,6 @@ export default function LoginForm() {
   return (
     <Form {...form}>
       <div className="mb-4">
-        <h1 className="text-2xl ">whatispent</h1>
         <span className=" text-slate-600">
           {isLogin ? "Log-in to your account" : "Creating new account"}
         </span>
