@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 
 export default function Title({ size = "md" }) {
   return (
-    <div className="flex justify-between flex-col xl:flex-row">
+    <div className="flex justify-between flex-col sm:flex-row">
       <h1 className={cn("text-2xl", size == "sm" && "text-md")}>whatispent</h1>
       <div className="text-xs -mt-2 mb-8 xl:mt-0 xl:mb-0">
         By{" "}

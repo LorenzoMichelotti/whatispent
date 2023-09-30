@@ -45,9 +45,9 @@ export default function AuthenticatedLayout({ children }) {
             </div>
           </TooltipProvider>
         </nav>
-        <div className="max-w-5xl mx-auto">
+        <div className="w-full max-w-5xl mx-auto">
           {children}
-          <div className="px-12 mt-4 text-slate-500">
+          <div className="md:px-12 mt-4 text-slate-500">
             <Title size="sm"></Title>
           </div>
         </div>
